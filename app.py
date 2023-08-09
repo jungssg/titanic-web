@@ -3,6 +3,7 @@ import pandas as pd
 import requests
 import json
 from pydantic import BaseModel
+import base64
 
 # using Pydantic models to declare request body
 # base data as derived from Streamlit Frontend
@@ -44,14 +45,21 @@ data = {"Age": Age,
 dataJSON = json.dumps(data) # create json object from dict
 
 # preprocess data by making post request to the API
-r = requests.post(url = "https://titanic-ml-api.fly.dev/preprocess/", data=dataJSON)
+r = requests.post(url = "https://titanic-js-api.fly.dev/preprocess/", data=dataJSON)
 preprocessedData = r.json()
 preprocessedJSON = json.dumps(preprocessedData)
 
 # make prediction by making post request to the API
-pred = requests.post(url = "https://titanic-ml-api.fly.dev/predict/", data=preprocessedJSON)
+pred = requests.post(url = "https://titanic-js-api.fly.dev/predict/", data=preprocessedJSON)
 # display survival probability
-st.image("./titanic.png", use_column_width=True)
+gif = open("./ponyo.gif","rb")
+content = gif.read()
+data_url= base64.b64encode(content).decode("utf-8")
+gif.close()
+
+st.markdown(f'<img src="data:image/gif;base64,{data_url}" >',
+    unsafe_allow_html=True)
+# st.image("./ponyo.gif", use_column_width=True)
 st.write("Your chance of Survival based on the information provided is: {}%.".format(pred.json()))
 
 if st.checkbox("Show Details"):
